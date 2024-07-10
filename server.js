@@ -54,6 +54,7 @@ app.post('/api/notes', (req, res) => {
   });
 });
 
+// bonus part with note deletion using id
 app.delete('/api/notes/:id', (req, res) => {
   const noteId = req.params.id;
 
