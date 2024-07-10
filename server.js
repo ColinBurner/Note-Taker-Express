@@ -26,7 +26,7 @@ app.get('*', (req, res) => {
 app.get('/api/notes', (req, res) => {
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
     if (err) {
-      console.error(err);
+      console.error('Error reading notes:', err);
       return res.status(500).json({ error: 'Failed to read notes' });
     }
     res.json(JSON.parse(data));
@@ -35,10 +35,11 @@ app.get('/api/notes', (req, res) => {
 
 app.post('/api/notes', (req, res) => {
   const newNote = { ...req.body, id: uuidv4() };
+  console.log('Saving new note:', newNote);
 
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
     if (err) {
-      console.error(err);
+      console.error('Error reading notes:', err);
       return res.status(500).json({ error: 'Failed to read notes' });
     }
     const notes = JSON.parse(data);
@@ -46,7 +47,7 @@ app.post('/api/notes', (req, res) => {
 
     fs.writeFile('./db/db.json', JSON.stringify(notes), (err) => {
       if (err) {
-        console.error(err);
+        console.error('Error writing note:', err);
         return res.status(500).json({ error: 'Failed to save note' });
       }
       res.json(newNote);
@@ -54,13 +55,13 @@ app.post('/api/notes', (req, res) => {
   });
 });
 
-// bonus part with note deletion using id
 app.delete('/api/notes/:id', (req, res) => {
   const noteId = req.params.id;
+  console.log('Deleting note with ID:', noteId);
 
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
     if (err) {
-      console.error(err);
+      console.error('Error reading notes:', err);
       return res.status(500).json({ error: 'Failed to read notes' });
     }
     let notes = JSON.parse(data);
@@ -68,7 +69,7 @@ app.delete('/api/notes/:id', (req, res) => {
 
     fs.writeFile('./db/db.json', JSON.stringify(notes), (err) => {
       if (err) {
-        console.error(err);
+        console.error('Error deleting note:', err);
         return res.status(500).json({ error: 'Failed to delete note' });
       }
       res.json({ message: 'Note deleted' });

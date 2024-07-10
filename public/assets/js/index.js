@@ -34,8 +34,12 @@ const getNotes = () =>
     headers: {
       'Content-Type': 'application/json'
     }
-  }).then((response) => {
-    console.log('Fetching notes:', response);
+  })
+  .then((response) => {
+    console.log('Response from GET /api/notes:', response);
+    if (!response.ok) {
+      throw new Error('Failed to fetch notes');
+    }
     return response.json();
   })
   .catch((error) => console.error('Error fetching notes:', error));
@@ -47,8 +51,12 @@ const saveNote = (note) =>
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(note)
-  }).then((response) => {
-    console.log('Saving note:', response);
+  })
+  .then((response) => {
+    console.log('Response from POST /api/notes:', response);
+    if (!response.ok) {
+      throw new Error('Failed to save note');
+    }
     return response.json();
   })
   .catch((error) => console.error('Error saving note:', error));
@@ -59,8 +67,12 @@ const deleteNote = (id) =>
     headers: {
       'Content-Type': 'application/json'
     }
-  }).then((response) => {
-    console.log('Deleting note:', response);
+  })
+  .then((response) => {
+    console.log('Response from DELETE /api/notes:', response);
+    if (!response.ok) {
+      throw new Error('Failed to delete note');
+    }
     return response.json();
   })
   .catch((error) => console.error('Error deleting note:', error));
@@ -90,10 +102,12 @@ const handleNoteSave = () => {
     text: noteText.value
   };
   console.log('New note to save:', newNote);
-  saveNote(newNote).then(() => {
-    getAndRenderNotes();
-    renderActiveNote();
-  }).catch((error) => console.error('Error handling note save:', error));
+  saveNote(newNote)
+    .then(() => {
+      getAndRenderNotes();
+      renderActiveNote();
+    })
+    .catch((error) => console.error('Error handling note save:', error));
 };
 
 // Delete the clicked note
@@ -108,10 +122,12 @@ const handleNoteDelete = (e) => {
     activeNote = {};
   }
 
-  deleteNote(noteId).then(() => {
-    getAndRenderNotes();
-    renderActiveNote();
-  }).catch((error) => console.error('Error handling note delete:', error));
+  deleteNote(noteId)
+    .then(() => {
+      getAndRenderNotes();
+      renderActiveNote();
+    })
+    .catch((error) => console.error('Error handling note delete:', error));
 };
 
 // Sets the activeNote and displays it
