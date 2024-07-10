@@ -34,7 +34,11 @@ const getNotes = () =>
     headers: {
       'Content-Type': 'application/json'
     }
-  });
+  }).then((response) => {
+    console.log('Fetching notes:', response);
+    return response.json();
+  })
+  .catch((error) => console.error('Error fetching notes:', error));
 
 const saveNote = (note) =>
   fetch('/api/notes', {
@@ -43,7 +47,11 @@ const saveNote = (note) =>
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(note)
-  });
+  }).then((response) => {
+    console.log('Saving note:', response);
+    return response.json();
+  })
+  .catch((error) => console.error('Error saving note:', error));
 
 const deleteNote = (id) =>
   fetch(`/api/notes/${id}`, {
@@ -51,7 +59,11 @@ const deleteNote = (id) =>
     headers: {
       'Content-Type': 'application/json'
     }
-  });
+  }).then((response) => {
+    console.log('Deleting note:', response);
+    return response.json();
+  })
+  .catch((error) => console.error('Error deleting note:', error));
 
 const renderActiveNote = () => {
   hide(saveNoteBtn);
@@ -77,19 +89,20 @@ const handleNoteSave = () => {
     title: noteTitle.value,
     text: noteText.value
   };
+  console.log('New note to save:', newNote);
   saveNote(newNote).then(() => {
     getAndRenderNotes();
     renderActiveNote();
-  });
+  }).catch((error) => console.error('Error handling note save:', error));
 };
 
 // Delete the clicked note
 const handleNoteDelete = (e) => {
-  // Prevents the click listener for the list from being called when the button inside of it is clicked
   e.stopPropagation();
 
   const note = e.target;
   const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
+  console.log('Note ID to delete:', noteId);
 
   if (activeNote.id === noteId) {
     activeNote = {};
@@ -98,17 +111,18 @@ const handleNoteDelete = (e) => {
   deleteNote(noteId).then(() => {
     getAndRenderNotes();
     renderActiveNote();
-  });
+  }).catch((error) => console.error('Error handling note delete:', error));
 };
 
 // Sets the activeNote and displays it
 const handleNoteView = (e) => {
   e.preventDefault();
   activeNote = JSON.parse(e.target.parentElement.getAttribute('data-note'));
+  console.log('Viewing note:', activeNote);
   renderActiveNote();
 };
 
-// Sets the activeNote to and empty object and allows the user to enter a new note
+// Sets the activeNote to an empty object and allows the user to enter a new note
 const handleNewNoteView = (e) => {
   activeNote = {};
   show(clearBtn);
@@ -129,7 +143,8 @@ const handleRenderBtns = () => {
 
 // Render the list of note titles
 const renderNoteList = async (notes) => {
-  let jsonNotes = await notes.json();
+  let jsonNotes = await notes;
+  console.log('Rendering notes:', jsonNotes);
   if (window.location.pathname === '/notes') {
     noteList.forEach((el) => (el.innerHTML = ''));
   }
@@ -182,7 +197,7 @@ const renderNoteList = async (notes) => {
 };
 
 // Gets notes from the db and renders them to the sidebar
-const getAndRenderNotes = () => getNotes().then(renderNoteList);
+const getAndRenderNotes = () => getNotes().then(renderNoteList).catch((error) => console.error('Error getting and rendering notes:', error));
 
 if (window.location.pathname === '/notes') {
   saveNoteBtn.addEventListener('click', handleNoteSave);
