@@ -1,5 +1,5 @@
 # Note-Taker-Express
-Repository for a CLI SVG logo generator
+Repository for a note taker made with express.js!
 
 ## Description
 
