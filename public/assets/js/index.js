@@ -42,7 +42,10 @@ const getNotes = () =>
     }
     return response.json();
   })
-  .catch((error) => console.error('Error fetching notes:', error));
+  .catch((error) => {
+    console.error('Error fetching notes:', error);
+    throw error; // rethrow the error to handle it in getAndRenderNotes
+  });
 
 const saveNote = (note) =>
   fetch('/api/notes', {
@@ -59,7 +62,10 @@ const saveNote = (note) =>
     }
     return response.json();
   })
-  .catch((error) => console.error('Error saving note:', error));
+  .catch((error) => {
+    console.error('Error saving note:', error);
+    throw error; // rethrow the error to handle it in handleNoteSave
+  });
 
 const deleteNote = (id) =>
   fetch(`/api/notes/${id}`, {
@@ -75,7 +81,10 @@ const deleteNote = (id) =>
     }
     return response.json();
   })
-  .catch((error) => console.error('Error deleting note:', error));
+  .catch((error) => {
+    console.error('Error deleting note:', error);
+    throw error; // rethrow the error to handle it in handleNoteDelete
+  });
 
 const renderActiveNote = () => {
   hide(saveNoteBtn);
@@ -159,8 +168,15 @@ const handleRenderBtns = () => {
 
 // Render the list of note titles
 const renderNoteList = async (notes) => {
-  let jsonNotes = await notes;
-  console.log('Rendering notes:', jsonNotes);
+  let jsonNotes;
+  try {
+    jsonNotes = await notes;
+    console.log('Rendering notes:', jsonNotes);
+  } catch (error) {
+    console.error('Error parsing notes:', error);
+    return;
+  }
+
   if (window.location.pathname === '/notes') {
     noteList.forEach((el) => (el.innerHTML = ''));
   }
@@ -213,7 +229,12 @@ const renderNoteList = async (notes) => {
 };
 
 // Gets notes from the db and renders them to the sidebar
-const getAndRenderNotes = () => getNotes().then(renderNoteList).catch((error) => console.error('Error getting and rendering notes:', error));
+const getAndRenderNotes = () => {
+  console.log('Getting and rendering notes');
+  getNotes()
+    .then(renderNoteList)
+    .catch((error) => console.error('Error getting and rendering notes:', error));
+};
 
 if (window.location.pathname === '/notes') {
   saveNoteBtn.addEventListener('click', handleNoteSave);
