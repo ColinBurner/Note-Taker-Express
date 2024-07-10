@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const notesRouter = require('./routes/notes'); // Assuming your `notes.js` file is in the `routes` directory
+const notesRouter = require('./routes/notes'); 
 
 const app = express();
 const PORT = process.env.PORT || 3001;
