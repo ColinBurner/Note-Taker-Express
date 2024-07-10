@@ -1,3 +1,4 @@
+// Imports
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -5,6 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const router = express.Router();
 
+// Function to read notes from the db.json file
 const readNotes = (callback) => {
   fs.readFile(path.join(__dirname, '../db/db.json'), 'utf8', (err, data) => {
     if (err) {
@@ -21,6 +23,7 @@ const readNotes = (callback) => {
   });
 };
 
+// Function to write notes to the db.json file
 const writeNotes = (notes, callback) => {
   fs.writeFile(path.join(__dirname, '../db/db.json'), JSON.stringify(notes), (err) => {
     if (err) {
@@ -31,6 +34,7 @@ const writeNotes = (notes, callback) => {
   });
 };
 
+// GET route to retrieve all notes
 router.get('/notes', (req, res) => {
   readNotes((err, notes) => {
     if (err) {
@@ -40,6 +44,7 @@ router.get('/notes', (req, res) => {
   });
 });
 
+// POST route to add a new note
 router.post('/notes', (req, res) => {
   const newNote = { ...req.body, id: uuidv4() };
   readNotes((err, notes) => {
@@ -56,6 +61,7 @@ router.post('/notes', (req, res) => {
   });
 });
 
+// DELETE route to delete a note by ID
 router.delete('/notes/:id', (req, res) => {
   const noteId = req.params.id;
   readNotes((err, notes) => {
@@ -72,4 +78,5 @@ router.delete('/notes/:id', (req, res) => {
   });
 });
 
+// Exports the router
 module.exports = router;

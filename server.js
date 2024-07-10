@@ -26,6 +26,11 @@ app.get('/', (req, res) => {
 // API routes
 app.use('/api', notesRouter);
 
+// Catch-all route to serve the custom 404 page
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'public/404.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`API server now on port ${PORT}!`);
 });
